@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from BeautifulSoup import BeautifulSoup
 import logging
 import requests
