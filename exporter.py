@@ -54,9 +54,12 @@ class PHPMyAdmin(object):
         self._logged_in = False
         self._logger.info("logged out")
 
-    def export_database(self, database):
+    def export_database(self, database, filename=None):
         if not self._logged_in:
             self.login()
+
+        if not filename:
+            filename = "%s.sql" % database
 
         self._logger.debug("exporting database...")
         data = {
@@ -90,7 +93,6 @@ class PHPMyAdmin(object):
             self._baseurl + "/export.php", data=data)
         resp.raise_for_status()
 
-        filename = "%s.sql" % database
         with open(filename, "w+") as f:
             f.write(resp.content)
         self._logger.info("database exported")
@@ -101,9 +103,11 @@ if __name__ == "__main__":
 
     usage = "usage: %prog [options] <baseurl> <username> <password> <database>"
     parser = OptionParser(usage)
+    parser.add_option("-o", "--output", dest="filename",
+                      help="write output to FILENAME")
     (options, args) = parser.parse_args()
     if len(args) != 4:
         parser.error("incorrect number of arguments")
 
     admin = PHPMyAdmin(*args[:3])
-    admin.export_database(args[3])
+    admin.export_database(args[3], filename=options.filename)
