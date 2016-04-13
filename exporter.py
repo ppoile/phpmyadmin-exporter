@@ -97,5 +97,13 @@ class PHPMyAdmin(object):
 
 
 if __name__ == "__main__":
-    phpmyadmin = PHPMyAdmin(baseurl="http://localhost/phpmyadmin", username="root", password="roott")
-    phpmyadmin.export_database("tvuster3")
+    from optparse import OptionParser
+
+    usage = "usage: %prog [options] <baseurl> <username> <password> <database>"
+    parser = OptionParser(usage)
+    (options, args) = parser.parse_args()
+    if len(args) != 4:
+        parser.error("incorrect number of arguments")
+
+    admin = PHPMyAdmin(*args[:3])
+    admin.export_database(args[3])
