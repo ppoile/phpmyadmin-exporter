@@ -29,14 +29,13 @@ class PHPMyAdmin(object):
         self._logger.debug("extracting token...")
         soup = BeautifulSoup(resp.content)
         token = soup.find('input', dict(name='token'))['value']
-        self._token = token
         self._logger.info("token: %s" % token)
+        self._session.params["token"] = token
         self._logger.debug("logging in...")
         data = {
             'pma_username': self._username,
             'pma_password': self._password,
             'server': 1,
-            'token': token,
         }
         resp = self._session.post(self._baseurl + "/index.php", data=data)
         resp.raise_for_status()
@@ -65,7 +64,6 @@ class PHPMyAdmin(object):
 
         self._logger.debug("exporting database...")
         data = {
-            "token": self._token,
             "export_type": "server",
             "export_method": "quick",
             "quick_or_custom": "quick",
